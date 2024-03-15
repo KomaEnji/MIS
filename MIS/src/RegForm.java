@@ -67,6 +67,9 @@ public class RegForm {
 //                updateStatement.setBinaryStream(1, fis, (int) imageFile.length());
 //                updateStatement.setInt(2, lastId + 1);
 //                updateStatement.executeUpdate();
+                /**
+                 * подготовка запроса для внесения данных в БД
+                 */
                 PreparedStatement insertStatement = con.prepareStatement("INSERT INTO \"patient1\"(patient_id," +
                         " first_name, middle_name, last_name, email, gender, birthday, address, phone_number, med_card," +
                         " med_card_issue, last_request, visit_date, ssn, ssn_date_end, diagnosis, med_story,photo)" +

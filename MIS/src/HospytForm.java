@@ -56,7 +56,6 @@ public class HospytForm {
             }
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 //            вставка данных в новую строку
-            assert con != null;
             PreparedStatement pst = con.prepareStatement("INSERT INTO \"hospitalization1\" (hospitalization_id,institution_name," +
                     "type,date_start,date_end,address,result,fk_patient_id) VALUES (?,?,?,?,?,?,?,?)");
             pst.setInt(1,lastId+1);
@@ -78,12 +77,14 @@ public class HospytForm {
 
     public HospytForm() {
         hiddenPanel.setVisible(false);
+        /** Вывод таблицы с названиями госпиталей*/
         Connection con = DBConnection.getConnect();
         try{
             assert con != null;
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT DISTINCT institution_name FROM \"hospitalization1\" ORDER BY institution_name ASC");
+            ResultSet rs = st.executeQuery("SELECT DISTINCT institution_name FROM \"hospitalization1\" ORDER BY institution_name ");
             hospTable.setModel(DbUtils.resultSetToTableModel(rs));
+            rs.close();
         }
         catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
         searchButton.addMouseListener(new MouseAdapter() {
@@ -142,9 +143,13 @@ public class HospytForm {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                /** Получение индекса нажатой строки в row с помощью слушателя мышки*/
                 int row = searchedPatientTable.rowAtPoint(e.getPoint());
+                /** Конвертирование индекса выбранной строки в модель для записи в переменную selectedRow*/
                 if (row>-1) selectedRow = searchedPatientTable.convertRowIndexToModel(row);
-                id = Integer.parseInt(String.valueOf(searchedPatientTable.getModel().getValueAt(selectedRow,0))); //передать в запись внешнего ключа
+                /** Получение содержимого выбранной строки с помощью преобразования модели*///передать в запись внешнего ключа
+                id = Integer.parseInt(String.valueOf(searchedPatientTable.getModel().getValueAt(selectedRow,0)));
+                //конвертирование данных в String и присваивание полученных данных в переменную FIO
                 String FIO = String.valueOf(searchedPatientTable.getModel().getValueAt(selectedRow,1));
                 choicedPatientLabel.setText("Выбранный пациент: "+FIO);
             }
