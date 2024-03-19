@@ -1,7 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
+//ВЫУЧИТЬ
 public class DBConnection {
     Connection con;
     public static Connection getConnect(){

@@ -63,10 +63,6 @@ public class RegForm {
                 System.out.println("путь" + imgPath);
                 File imageFile = new File(String.valueOf(imgPath));
                 FileInputStream fis = new FileInputStream(imageFile);
-//                PreparedStatement updateStatement = con.prepareStatement("UPDATE \"patient1\" SET \"photo\"=? WHERE patient_id=?");
-//                updateStatement.setBinaryStream(1, fis, (int) imageFile.length());
-//                updateStatement.setInt(2, lastId + 1);
-//                updateStatement.executeUpdate();
                 /**
                  * подготовка запроса для внесения данных в БД
                  */
@@ -131,7 +127,7 @@ public class RegForm {
                 Gender="F";
             }
         });
-//        Кнопка выбора фото
+//        Кнопка выбора фото ВЫУЧИТЬ
         choicePhotoButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

@@ -7,5 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="apache.poi.ooxml" level="project" />
+    <orderEntry type="library" exported="" name="apache.logging.log4j.core" level="project" />
   </component>
 </module>

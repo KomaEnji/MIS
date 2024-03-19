@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.List;
 
@@ -205,6 +207,7 @@ public class DoctorsForm {
         scheduleTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                //ПОЛУЧЕНИЕ ЗНАЧЕНИЙ ИЗ ПОЛЕЙ ТАБЛИЦЫ РАСПИСАНИЯ
                 super.mouseClicked(e);
                 int row = scheduleTable.rowAtPoint(e.getPoint());
                 if (row>-1) selectedRow = scheduleTable.convertRowIndexToModel(row);
@@ -224,14 +227,14 @@ public class DoctorsForm {
                 super.mouseClicked(e);
                 Connection con = DBConnection.getConnect();
                 try{
+                    //НАХОЖДЕНИЕ ПОСЛЕДНЕГО id В ТАБЛИЦЕ С НАПРАВЛЕНИЯМИ
                     int lastId = 0;
                     Statement st = con.createStatement();
                     ResultSet rs = st.executeQuery("SELECT referral_id FROM referral ORDER BY referral_id ASC");
                     while(rs.next()){
                         lastId=rs.getInt(1);
                     }
-
-                    assert con != null;
+//                 ВСТАВКА ЗНАЧЕНИЙ В ТАБЛИЦУ
                     PreparedStatement pst = con.prepareStatement("INSERT INTO \"referral\"(referral_id,fk_patient_id,fk_schedule_id)" +
                             " VALUES(?,?,?)");
                     pst.setInt(1,lastId+1);
@@ -241,35 +244,42 @@ public class DoctorsForm {
                     JOptionPane.showMessageDialog(null,"Талон сформирован");
                 }
                 catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
-
-//                try (InputStream is = getClass().getClassLoader().getResourceAsStream("C:\\Users\\Home\\Downloads\\shablon.docx");
-//
-//                     XWPFDocument doc = new XWPFDocument(is)) {
-//
-//        /*try (XWPFDocument doc = new XWPFDocument(
-//                Files.newInputStream(Paths.get(input)))
-//        ) {*/
-//
-//                    List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
-//                    //Iterate over paragraph list and check for the replaceable text in each paragraph
-//                    for (XWPFParagraph xwpfParagraph : xwpfParagraphList) {
-//                        for (XWPFRun xwpfRun : xwpfParagraph.getRuns()) {
-//                            String docText = xwpfRun.getText(0);
-//                            //replacement and setting position
-//                            docText = docText.replace("${ИМЯ}", fullNamePatient);
-//                            xwpfRun.setText(docText, 0);
-//                        }
-//                    }
-//
-//                    // save the docs
-//                    try (FileOutputStream out = new FileOutputStream("C:\\Users\\Home\\Downloads\\output.docx")) {
-//                        doc.write(out);
-//                    }
-//
-//                } catch (IOException ex) {
-//                    throw new RuntimeException(ex);
-//                }
+//                _______ЗАПИСЬ ДАННЫХ В ФАЙЛ_____ ВЫУЧИТЬ
+                try(XWPFDocument doc = new XWPFDocument(Files.newInputStream(Paths.get("C:\\Users\\Home\\Downloads\\shablon.docx")))){
+                    List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
+                    for (XWPFParagraph xwpfParagraph:xwpfParagraphList){
+                        for (XWPFRun xwpfRun : xwpfParagraph.getRuns()){
+                            String docText = xwpfRun.getText(0);
+                            if (docText.equals("ИМЯ"))
+                                docText=docText.replace("ИМЯ",fullNamePatient);
+                            if (docText.equals("КАРТА"))
+                                docText=docText.replace("КАРТА",medCardNumber);
+                            if (docText.equals("КАБИНЕТ"))
+                                docText=docText.replace("КАБИНЕТ",String.valueOf(cabNumber));
+                            if (docText.equals("ДАТА"))
+                                docText=docText.replace("ДАТА",String.valueOf(referralTime));
+                            if (docText.equals("ВРАЧ"))
+                                docText=docText.replace("ВРАЧ",fullNameDoctor);
+                            xwpfRun.setText(docText,0);
+                        }
+                    }
+                    try(FileOutputStream out = new FileOutputStream("C:\\Users\\Home\\Downloads\\shablon1.docx")){
+                        doc.write(out);
+                    }
+                }
+                catch(IOException ex){
+                    throw new RuntimeException(ex);
+                }
             }
         });
+
+    }
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("DoctorsForm");
+        frame.setContentPane(new DoctorsForm().doctorsPanel);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
