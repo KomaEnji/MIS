@@ -10,7 +10,7 @@ public class placeFondForm {
     public   JTable placeTable;
     public   JTable patientTable;
     private JButton moveToBedButton;
-    private JButton moveToPatientButton;
+    private JButton clearButton;
     private JLabel selectedPatientLabel;
     private JLabel selectedBedLabel;
     public int selectedRowInPatient;
@@ -83,7 +83,6 @@ public class placeFondForm {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Connection con =DBConnection.getConnect();
                 if (patientId!=0 && hospitId!=0 && bedId!=0){
                     try {
                         assert con != null;
@@ -107,10 +106,24 @@ public class placeFondForm {
 
             }
         });
-        moveToPatientButton.addMouseListener(new MouseAdapter() {
+        clearButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                if (bedId != 0){
+                    try {
+                        PreparedStatement pst = con.prepareStatement("UPDATE \"bed\" " +
+                                "SET fk_patient_id=null, fk_hospitalization_id=null, patient=null " +
+                                "WHERE bed_id=?; ");
+                        pst.setInt(1,bedId);
+                        pst.executeUpdate();
+                        pst.close();
+                        placeTable.setValueAt(null,bedId-1,3);
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                else JOptionPane.showMessageDialog(null,"Не выбрано койко-место");
             }
         });
     }
