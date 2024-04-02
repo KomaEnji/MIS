@@ -137,7 +137,6 @@ public class RegForm {
                 if (result == JFileChooser.APPROVE_OPTION){
                     if(jf.getSelectedFile().exists()){
                         imgPath = new File(String.valueOf(jf.getSelectedFile()));
-                        System.out.println(imgPath);
                     }
                 }
             }

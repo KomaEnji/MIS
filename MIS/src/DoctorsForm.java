@@ -38,10 +38,21 @@ public class DoctorsForm {
     public Time referralTime;
     public int fkDoctorId;
     public int patientId;
-    /**
-     *
-      */
-
+    public Connection con = DBConnection.getConnect();
+    public ResultSet weeksRs;
+    public ResultSet weekQuary(String day, String rusDay){
+        try {
+            Statement st = con.createStatement();
+            weeksRs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
+                    "Специализация, D.full_name AS ФИО, S."+day+" AS "+rusDay+", S.fk_doctor_id  " +
+                    "FROM \"doctor\" D " +
+                    "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
+            return weeksRs;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
     public DoctorsForm() {
 
 
@@ -57,7 +68,7 @@ public class DoctorsForm {
                             "Специализация, D.full_name AS ФИО, S.monday AS Пн, S.tuesday AS Вт, S.wednsday AS Ср, " +
                             "S.thursday AS Чт, S.friday AS Пт, S.fk_doctor_id " +
                             " FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
+                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY id;");
                     scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
                     con.close();
                     st.close();
@@ -69,102 +80,38 @@ public class DoctorsForm {
         });
         monButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Connection con = DBConnection.getConnect();
-                assert con != null;
-                try{
-                    Statement st = con.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
-                            "Специализация, D.full_name AS ФИО, S.monday AS Пн, S.fk_doctor_id  " +
-                            "FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
-                    scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    con.close();
-                    st.close();
-                    rs.close();
-                }
-                catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                scheduleTable.setModel(DbUtils.resultSetToTableModel(weekQuary("monday","Пн")));
             }
         });
         tueButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Connection con = DBConnection.getConnect();
-                assert con != null;
-                try{
-                    Statement st = con.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
-                            "Специализация, D.full_name AS ФИО, S.tuesday AS Вт , S.fk_doctor_id " +
-                            "FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
-                    scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    con.close();
-                    st.close();
-                    rs.close();
-                }
-                catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                scheduleTable.setModel(DbUtils.resultSetToTableModel(weekQuary("tuesday","Вт")));
+
             }
         });
         wednButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                Connection con = DBConnection.getConnect();
-                assert con != null;
-                try{
-                    Statement st = con.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
-                            "Специализация, D.full_name AS ФИО, S.wednsday AS Ср, S.fk_doctor_id  " +
-                            "FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
-                    scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    con.close();
-                    st.close();
-                    rs.close();
-                }
-                catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                scheduleTable.setModel(DbUtils.resultSetToTableModel(weekQuary("wednsday","Ср")));
             }
         });
         fhuButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Connection con = DBConnection.getConnect();
-                assert con != null;
-                try{
-                    Statement st = con.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
-                            "Специализация, D.full_name AS ФИО, S.thursday AS Чт, S.fk_doctor_id  " +
-                            "FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
-                    scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    con.close();
-                    st.close();
-                    rs.close();
-                }
-                catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
+                scheduleTable.setModel(DbUtils.resultSetToTableModel(weekQuary("thursday","Чт")));
             }
         });
         friButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                Connection con = DBConnection.getConnect();
-                assert con != null;
-                try{
-                    Statement st = con.createStatement();
-                    ResultSet rs = st.executeQuery("SELECT S.id AS №, D.cabinet AS Кабинет, D.specialisation AS " +
-                            "Специализация, D.full_name AS ФИО, S.friday AS Пт, S.fk_doctor_id  " +
-                            "FROM \"doctor\" D " +
-                            "JOIN \"schedule\" S ON D.doctor_id = S.fk_doctor_id ORDER BY full_name;");
-                    scheduleTable.setModel(DbUtils.resultSetToTableModel(rs));
-                    con.close();
-                    st.close();
-                    rs.close();
-                }
-                catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
+                scheduleTable.setModel(DbUtils.resultSetToTableModel(weekQuary("friday","Пт")));
             }
         });
 
@@ -191,6 +138,7 @@ public class DoctorsForm {
                 Connection con = DBConnection.getConnect();
                 try{
                     String search = searchPatientTFied.getText();
+                    assert con != null;
                     PreparedStatement pst = con.prepareStatement("SELECT patient_id, CONCAT(last_name,' ',LEFT(first_name,1),'. '," +
                             "LEFT(middle_name,1),'.' ) AS ФИО, med_card AS №Карты, last_request AS ДатаПоследнегоОбращения" +
                             " FROM \"patient1\" WHERE last_name = ?");
@@ -244,7 +192,7 @@ public class DoctorsForm {
                     JOptionPane.showMessageDialog(null,"Талон сформирован");
                 }
                 catch (SQLException ex){JOptionPane.showMessageDialog(null,ex.getMessage());}
-//                _______ЗАПИСЬ ДАННЫХ В ФАЙЛ_____ ВЫУЧИТЬ
+//                ВЫУЧИТЬ_______ЗАПИСЬ ДАННЫХ В ФАЙЛ_____
                 try(XWPFDocument doc = new XWPFDocument(Files.newInputStream(Paths.get("C:\\Users\\Home\\Downloads\\shablon.docx")))){
                     List<XWPFParagraph> xwpfParagraphList = doc.getParagraphs();
                     for (XWPFParagraph xwpfParagraph:xwpfParagraphList){

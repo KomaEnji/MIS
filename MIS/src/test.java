@@ -1,35 +1,37 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
-import static java.lang.String.valueOf;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class test {
-    public static void main(String[] args){
-        Connection con=DBConnection.getConnect();
-                    if (con!=null) {
-                        try {
-                            int lastId = 0;
-//                              обращение к столбцу patient_id
-                            Statement st = con.createStatement();
-                            ResultSet rs_lastId = st.executeQuery("SELECT patient_id FROM \"Patient\"");
-                            while (rs_lastId.next()){       //нахождение последней строки
-                                lastId = rs_lastId.getInt(1);
-                                System.out.println(lastId);
-                            }
-                            String photo="yea";
-                            ResultSet rs_insert =st.executeQuery("INSERT INTO \"Patient\"(patient_id," +
-                                    "photo, first_name, last_name, passport, birthdate, gender, address, phone_number," +
-                                    "email, med_card_ issue_date_med_card, req_date, ssn, ssn_end, diagnosis, medical_story)" +
-                                    "VALUES ("+(lastId+1)+","+photo+")");
+    public static void main(String[] args) {
+        // Создание JFrame
+        JFrame frame = new JFrame("Пример замены JPanel");
 
-                            st.close();
-                            rs_lastId.close();
-                            con.close();
-                        } catch (Exception ex) {
-                            System.out.println(ex);
-                        }
+// Создание первого JPanel
+        JPanel panel1 = new JPanel();
+        panel1.add(new JLabel("Это первый JPanel"));
 
-                    }
+// Создание второго JPanel
+        JPanel panel2 = new JPanel();
+        panel2.add(new JLabel("Это второй JPanel"));
+
+// Создание кнопки, которая будет заменять JPanel
+        JButton button = new JButton("Заменить JPanel");
+        button.addActionListener(e -> {
+            frame.getContentPane().remove(panel1);
+            frame.getContentPane().add(panel2);
+            frame.revalidate();
+            frame.repaint();
+        });
+
+// Добавление JPanel и кнопки на JFrame
+        frame.add(panel1, BorderLayout.CENTER);
+        frame.add(button, BorderLayout.SOUTH);
+
+// Настройка JFrame
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        frame.setVisible(true);
+
     }
 }

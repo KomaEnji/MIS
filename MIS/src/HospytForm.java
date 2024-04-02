@@ -82,7 +82,7 @@ public class HospytForm {
         try{
             assert con != null;
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT DISTINCT institution_name FROM \"hospitalization1\" ORDER BY institution_name ");
+            ResultSet rs = st.executeQuery("SELECT DISTINCT institution_name AS Название FROM \"hospitalization1\" ORDER BY institution_name ");
             hospTable.setModel(DbUtils.resultSetToTableModel(rs));
             rs.close();
         }
